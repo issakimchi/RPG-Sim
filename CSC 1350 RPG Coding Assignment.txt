@@ -1,0 +1,160 @@
+import java.util.Scanner;
+import java.util.Random;
+
+public class RGPSim {
+    static int PlayerHealth = 100, GoblinHealth = 80, ManaPoints = 50;
+    static int currentFireballMin = 10, currentFireballMax = 26;
+    static int currentBasicMin = 5, currentBasicMax = 11;
+    static int currentHealMin = 20, currentHealMax = 31;
+    static Scanner turnScanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        System.out.println("Health: " + PlayerHealth + "/100\tMana: " + ManaPoints + "/50");
+        System.out.println("Hello player, nice to meet you!\nOh no! You encountered a goblin. What do you do?");
+        while (PlayerHealth > 0 || GoblinHealth > 0) {
+            if (PlayerHealth <= 0) {
+                System.out.println("\nGame over! You suck and I had no faith that you could beat him. The goblin beat you up and ate your corpse. GG");
+                System.exit(0);
+            } else {
+                PlayerChoices();
+            }
+            if (GoblinHealth <= 0) {
+                System.out.println("\nGG! You're amazing! I always knew you could beat the goblin :)");
+                System.exit(0);
+            } else {
+                GoblinTurn();
+                System.out.println("\nThe goblin is going to hit you again!");
+                GoblinTurn();
+                if (PlayerHealth > 0) {
+                    System.out.println("\nYour turn!");
+                }
+            }
+        }
+    }
+    public static void GoblinTurn() {
+        Random randomGoblinAttack = new Random();
+        int GoblinAttackDmg = randomGoblinAttack.nextInt(3, 8);
+
+        Random randomGoblin = new Random();
+        int randomGoblinNumber = randomGoblin.nextInt(101);
+        if (randomGoblinNumber < 50) {
+            PlayerHealth -= GoblinAttackDmg;
+            System.out.println("\nThe goblin attacked you for " + GoblinAttackDmg + " damage points!");
+            if (PlayerHealth < 0) {
+                PlayerHealth = 0;
+            }
+            System.out.println("Your health: " + PlayerHealth + "/100\tYour mana: " + ManaPoints + "/50");
+            System.out.println("Goblin Health: " + GoblinHealth + "/80");
+        } else {
+            System.out.println("\nThe goblin tried to attack and you dodged it because you're super duper cool!");
+            System.out.println("Your health: " + PlayerHealth + "/100\tYour mana: " + ManaPoints + "/50");
+            System.out.println("Goblin Health: " + GoblinHealth + "/80");
+        }
+
+    }public static void BasicAttack () {
+        Random randomBasicAttack = new Random();
+        int BasicAttackDmg = randomBasicAttack.nextInt(currentBasicMin, currentBasicMax);
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(101);
+        if (randomNumber < 80) {
+            GoblinHealth -= BasicAttackDmg;
+            System.out.println("\nYou dealt " + BasicAttackDmg + " points of damage to the goblin.");
+            if (GoblinHealth <= 0) {
+                GoblinHealth = 0;
+            }
+            System.out.println("Goblin health: " + GoblinHealth + "/80");
+            System.out.println("Your health: " + PlayerHealth + "/100\tYour mana: " + ManaPoints + "/50");
+        } else {
+            System.out.println("\nLmao you missed.\nGoblin health: " + GoblinHealth + "/80");
+            System.out.println("Your health: " + PlayerHealth + "/100\tYour mana: " + ManaPoints + "/50");
+        }
+
+    } public static void FireballAttack () {
+        Random randomFireBallAttack = new Random();
+        int FireBallDmg = randomFireBallAttack.nextInt(currentFireballMin, currentFireballMax);
+
+        if (ManaPoints >= 6) {
+            ManaPoints -= 6;
+            GoblinHealth -= FireBallDmg;
+            System.out.println("\nYou used Fireball and hit the goblin for " + FireBallDmg + " points of damage.");
+            if (GoblinHealth < 0) {
+                GoblinHealth = 0;
+            }
+            System.out.println("Goblin Health: " + GoblinHealth + "/80");
+            System.out.println("Your health: " + PlayerHealth + "/100\tYour mana: " + ManaPoints + "/50");
+        } else {
+            System.out.println("You don't have enough mana for this move dummy! Try something else.");
+            PlayerChoices();
+        }
+
+    } public static void HealingPlayer () {
+        Random randomHeal = new Random();
+        int HealDone = randomHeal.nextInt(currentHealMin, currentHealMax);
+
+        if (ManaPoints < 8) {
+            System.out.println("\nNot enough mana dummy! Try something else.");
+            PlayerChoices();
+        } else if (PlayerHealth == 100) {
+            System.out.println("\nYou're too healthy to heal yourself. Stop fearing inevitable death and try something else.");
+            PlayerChoices();
+        } else if (PlayerHealth + HealDone > 100) {
+            ManaPoints -= 8;
+            PlayerHealth = 100;
+            System.out.println("\nYou healed for " + (HealDone) + " points, but you can't exceed your maximum health, so now you are at max health.");
+            System.out.println("Your mana: " + ManaPoints + "/50\tGoblin Health: " + GoblinHealth + "/80");
+        }else {
+            PlayerHealth += HealDone;
+            ManaPoints -=8;
+            System.out.println("\nYou chose to heal yourself. You healed yourself for a total of " + HealDone + " health points.");
+            System.out.println("Your health: " + PlayerHealth + "/100\tYour mana: " + ManaPoints + "/50");
+            System.out.println("Goblin Health: " + GoblinHealth + "/80");
+        }
+
+    } public static void Empower () {
+        if (ManaPoints >= 10) {
+            ManaPoints -= 10;
+            currentBasicMin += 1;
+            currentBasicMax += 2;
+            currentFireballMin += 1;
+            currentFireballMax += 2;
+            currentHealMin += 1;
+            currentHealMax += 2;
+            System.out.println("\nYou chose to empower yourself. Your damage moves and heal are now stronger.");
+            System.out.println("Your health: " + PlayerHealth + "/100\tYour mana: " + ManaPoints + "/50");
+            System.out.println("Goblin Health: " + GoblinHealth + "/80");
+        } else {
+            System.out.println("You don't have enough mana points to use this. Try something else.");
+            PlayerChoices();
+        }
+
+    } public static void RunAway () {
+        System.out.println("\nYou're a coward and should be ashamed of yourself. Game over, you trip, fall, and die from embarrassment before the goblin could get you.");
+        System.exit(0);
+
+    } public static void PlayerChoices () {
+        int BasicAttack = 1, Fireball = 2, Heal = 3, Empower = 4, Flee = 5;
+        System.out.println("1 - Basic Attack\n2 - Fireball (6 mana points)\n3 - Heal (8 mana points)\n4 - Empower (10 mana points)\n5 - Flee");
+        switch (turnScanner.nextInt()) {
+            case 1:
+                BasicAttack();
+                break;
+            case 2:
+                FireballAttack();
+                break;
+            case 3:
+                HealingPlayer();
+                break;
+            case 4:
+                Empower();
+                break;
+            case 5:
+                RunAway();
+                break;
+            default:
+                System.out.println("\nInvalid option, try something else.");
+                PlayerChoices();
+                break;
+        }
+    }
+}
